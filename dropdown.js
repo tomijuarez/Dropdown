@@ -7,9 +7,7 @@
    */
   var getElements = function ( attribute, value ) {
     var filter = [ ]
-        /**
-         * Todos los elementos del documento HTML.
-         */
+        //Todos los elementos del documento HTML.
       , selection = document.getElementsByTagName('*')
       , i
       , l = selection.length
