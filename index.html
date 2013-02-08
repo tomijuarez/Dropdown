@@ -1,151 +1,147 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<meta charset="utf-8" />
-	<title>Dropdown menu</title>
-	<script type="text/javascript" src="./dropdown.js"></script>
-	<style type="text/css">
-	/**
+  <meta charset="utf-8" />
+  <title>Dropdown menu</title>
+  <script type="text/javascript" src="./dropdown.js"></script>
+  <style type="text/css">
+  /**
    * Re-formato de código -reset-
-	 */
-	* {
-		margin : 0;
-		padding : 0;
-	}
+   */
+  * {
+    margin : 0;
+    padding : 0;
+  }
+  body {
+    font-family : Verdana;
+    font-size : 11px;
+    color : rgb( 20, 20, 20, .6);
+  }
 
-	body {
-		font-family : Verdana;
-		font-size : 11px;
-		color : rgb( 20, 20, 20, .6);
-	}
+  ul, ol, li {
+    display : block;
+    list-style-type : none;
+  }
 
-	ul, ol, li {
-		display : block;
-		list-style-type : none;
-	}
+  a {
+    display : block;
+    text-decoration : none;
+    cursor : pointer;
+    color : #555;
+  }
 
-	a {
-		display : block;
-		text-decoration : none;
-		cursor : pointer;
-		color : #555;
-	}
+  /**
+   * Clases
+   */
+  .classic-button {
+    background : #CCC;
+    /*Todos los tipos de navegadores*/
+    -webkit-border-radius : 3px;
+        -moz-border-radius : 3px; 
+         -ms-border-radius : 3px; 
+          -o-border-radius : 3px; 
+             border-radius : 3px; 
+    text-shadow : 0 1px 1px rgba( 25, 25, 25, .4 );
+    color : white;
+  }
 
-	/**
-	 * Clases
-	 */
-	.classic-button {
-		background : #CCC;
+  .dropdown {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    min-width: 160px;
+    padding: 5px;
+    margin: 2px 0 0;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+         -o-border-radius: 3px;
+            border-radius: 3px;
 
-		/*Todos los tipos de navegadores*/
-		-webkit-border-radius : 3px;
-			 -moz-border-radius : 3px; 
-		    -ms-border-radius : 3px; 
-		     -o-border-radius : 3px; 
-		        border-radius : 3px; 
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+           -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 
-		text-shadow : 0 1px 1px rgba( 25, 25, 25, .4 );
-		color : white;
-	}
+    -webkit-background-clip: padding-box;
+       -moz-background-clip: padding;
+            background-clip: padding-box;
+  }
 
+  .dropdown li a {
+    padding : 8px;
+    -webkit-border-radius: 3px;
+           -moz-border-radius: 3px;
+            -ms-border-radius: 3px;
+               -o-border-radius: 3px;
+                  border-radius: 3px;
+    -webkit-text-shadow: 0 1px 1px rgba(256, 256, 256, .9);
+       -moz-text-shadow: 0 1px 1px rgba(256, 256, 256, .9);
+            text-shadow: 0 1px 1px rgba(256, 256, 256, .9);
+  }
 
-	.dropdown {
-		display: none;
-		position: absolute;
-		z-index: 1000;
-		min-width: 160px;
-		padding: 5px;
-		margin: 2px 0 0;
-		border: 1px solid #ccc;
-		border: 1px solid rgba(0, 0, 0, 0.2);
-		-webkit-border-radius: 3px;
-			 -moz-border-radius: 3px;
-			 	-ms-border-radius: 3px;
-				 -o-border-radius: 3px;
-				 		border-radius: 3px;
+  .dropdown li a:hover {
+    background : #09F;
+    color : white;
+    -webkit-text-shadow: 0 1px 1px rgba(20, 20, 20, .6);
+           -moz-text-shadow: 0 1px 1px rgba(20, 20, 20, .6);
+                text-shadow: 0 1px 1px rgba(20, 20, 20, .6);
+  }
 
-		-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-			 -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-						box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  /**
+   * Construcción de las capas de ejemplo
+   */
+  .dropdown-container {
+    margin : 15px;
+  }
 
-		-webkit-background-clip: padding-box;
-			 -moz-background-clip: padding;
-						background-clip: padding-box;
-	}
+  .dropdown-buttons {
+    display : inline-block;
+  }
 
-	.dropdown li a {
-		padding : 8px;
-		-webkit-border-radius: 3px;
-			 -moz-border-radius: 3px;
-			 	-ms-border-radius: 3px;
-				 -o-border-radius: 3px;
-				 		border-radius: 3px;
-		-webkit-text-shadow: 0 1px 1px rgba(256, 256, 256, .9);
-			 -moz-text-shadow: 0 1px 1px rgba(256, 256, 256, .9);
-						text-shadow: 0 1px 1px rgba(256, 256, 256, .9);
-	}
-
-	.dropdown li a:hover {
-		background : #09F;
-		color : white;
-		-webkit-text-shadow: 0 1px 1px rgba(20, 20, 20, .6);
-			 -moz-text-shadow: 0 1px 1px rgba(20, 20, 20, .6);
-						text-shadow: 0 1px 1px rgba(20, 20, 20, .6);
-	}
-
-	/**
-	 * Construcción de las capas de ejemplo
-	 */
-	.dropdown-container {
-		margin : 15px;
-	}
-
-	.dropdown-buttons {
-		display : inline-block;
-	}
-
-	.dropdown-buttons a {
-		display : block;
-		padding : 8px;
-	}
+  .dropdown-buttons a {
+    display : block;
+    padding : 8px;
+  }
 	
-	</style>
+</style>
+<script type="text/javascript">
+  Dropdown.trigger();
+</script>
 </head>
 <body>
-	<div class="dropdown-container">
-		<ul>
-			<li class="dropdown-buttons">
-				<a class="classic-button" role="dropDown" target="drop0">Dropdown 1</a>
-				<ul class="dropdown" id="drop0" open="false">
-					<li>
-						<a href="#">First link</a>
-					</li>
-					<li>
-						<a href="#">First link</a>
-					</li>
-					<li>
-						<a href="#">First link</a>
-					</li>
-				</ul>
-			</li>
-			<li class="dropdown-buttons">
-				<a class="classic-button" role="dropDown" target="drop1">Dropdown 4</a>
-				<ul class="dropdown" id="drop1" open="false">
-					<li>
-						<a href="#">First link</a>
-					</li>
-					<li>
-						<a href="#">First link</a>
-					</li>
-					<li>
-						<a href="#">First link</a>
-					</li>
-				</ul>
-			</li>
-		</ul>
-	</div>
-	<script type="text/javascript">
-	Dropdown.trigger();
-	</script>
+  <div class="dropdown-container">
+    <ul>
+      <li class="dropdown-buttons">
+        <a class="classic-button" role="dropDown" target="drop0">Dropdown 1</a>
+        <ul class="dropdown" id="drop0" open="false">
+          <li>
+            <a href="#">First link</a>
+          </li>
+          <li>
+            <a href="#">First link</a>
+          </li>
+          <li>
+            <a href="#">First link</a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown-buttons">
+        <a class="classic-button" role="dropDown" target="drop1">Dropdown 4</a>
+        <ul class="dropdown" id="drop1" open="false">
+          <li>
+            <a href="#">First link</a>
+          </li>
+          <li>
+            <a href="#">First link</a>
+          </li>
+          <li>
+            <a href="#">First link</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
 </body>
 </html>
