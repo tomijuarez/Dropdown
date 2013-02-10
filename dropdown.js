@@ -6,21 +6,27 @@
    * Obtiene todos los elementos por el valor de un determinado atributo.
    */
   var getElements = function ( attribute, value ) {
-    var filter = [ ]
-        //Todos los elementos del documento HTML.
-      , selection = document.getElementsByTagName('*')
-      , i
-      , l = selection.length
-      ;
 
-    for ( i = 0; i < l; ++i ) {
-      //Si el elemento tiene el atributo pasado y concuerda con el valor dado(...)
-      if ( selection [ i ].getAttribute( attribute ) == value ) {
-        filter.push( selection [ i ] );
+      var filter = [ ]
+         //Todos los elementos del documento HTML.
+        , selection = document.getElementsByTagName('*')
+        , i
+        , l = selection.length
+        ;
+
+      for ( i = 0; i < l; ++i ) {
+        //Si el elemento tiene el atributo pasado y concuerda con el valor dado(...)
+        if ( selection [ i ].getAttribute( attribute ) == value ) {
+          filter.push( selection [ i ] );
+        }
       }
+      //Retorna los elementos que concuerden con la busqueda.
+      return filter;
     }
-    //Retorna los elementos que concuerden con la busqueda.
-    return filter;
+  ; 
+  Object.prototype.applyStyle = function ( attribute, value ) {
+    this.style [ attribute ] = value;
+    return this;  
   };
 
   Dropdown = function () { };
@@ -32,35 +38,118 @@
        * para evitar conflictos en caso de implementar herencias.
        */
       constructor : Dropdown
+
+    , closeElements : function ( opened ) {
+        opened
+          .applyStyle('display', 'none')
+          .setAttribute('open', 'false')
+        ;  
+      }
       
-    , openDrop : function ( element ) {
+    , openDrop : function ( element, keyPress ) {
 
       var clicked = element.target
         , open = getElements( 'open', 'true' )
-        , target = document.getElementById( clicked.getAttribute('target') )
+        , targetElement = document.getElementById( clicked.getAttribute('target') )
+        , clickFunction = function ( e ) {
+            if ( e.target == clicked ) {
+              Dropdown.closeElements( targetElement );
+            }
+          }
         ;
+      
+
+      if ( keyPress ) {
+        Dropdown.closeElements( open [ 0 ] );
+        return;
+      }
 
       //Si hay Dropdowns activos, se cierran y se da el atributo [open="false"].
       //Si el "target" del elemento clickeado esta activo, simplemente se cierra, si no, se abre.
-      if ( open.length > 0 ) {
-        open [ 0 ].style.display = 'none';
-        open [ 0 ].setAttribute('open', 'false');
+      if ( !!open.length ) {
+        dropDownActive = open [ 0 ];
+        
+        Dropdown.closeElements( dropDownActive );
 
-        if ( open [ 0 ] == target ) return;
+        document.documentElement.addEventListener(
+           'click' 
+          , function ( e ) {
+
+              clickFunction( e );
+              this.removeEventListener(
+                 'click'
+                  /**
+                   * Warning: The 5th edition of ECMAScript forbids use of arguments.callee() in strict mode.
+                   */
+                , arguments.callee
+                , false 
+              );
+            }
+          , false
+        );
+
+        if ( Dropdown == targetElement ) return;
       }
         
-      target.style.display = 'block';
-      target.setAttribute('open', 'true');
+
+      targetElement
+        .applyStyle('display', 'block')
+        .setAttribute('open', 'true')
+      ;
     }
     /**
      * Inicialización de la clase, este método activa los eventos "click" 
      * en cada elemento con el atributo [role="Dropdown"]
      */
     , trigger : function () {
-        
-      var elements = getElements( 'role', 'dropDown' )
+     
+      var elements = getElements( 'role', 'dropdown' )
         , j
         , k = elements.length
+        , keysCode = { 
+             "escape" : 27 
+            , "up"    : 38
+            , "down"  : 40
+            , "enter" : 13
+          }
+        , keysPressed = function ( keyObject, callback ) {
+
+            var keysList = Array.prototype.slice.call( keyObject.expect )
+              , direction
+              , pressed = keyObject.pressed
+              ;
+
+            keysList.forEach( function ( each ) {
+              if ( pressed == each ) {
+
+                direction = ( pressed == keysCode.up ) ? 'up' : 'down';
+                
+                return callback( direction );
+              }
+            });
+          }
+        , targetElement
+        , getListItems = function ( parent, finder ) {
+            var children
+              , v
+              , childs = [ ]
+              ;
+
+            if ( parent.hasChildNodes() ) {
+              children = parent.childNodes;
+  
+              for ( v = 0; v < children.length; ++v ) {
+                if ( children [ v ].tagName == finder.toUpperCase()  ) {
+                  childs.push( children [ v ] );     
+                }
+              }
+            }
+            return childs;
+          }
+        , listItems
+        , activeItem = 1
+        , activeToDown = 0
+        , selected
         ;
 
       //Para cada elemento con tal atributo, se añade un "listener".
@@ -69,11 +158,92 @@
         elements [ j ].addEventListener(
            'click'
           , function ( elementClicked ) {
-              return Dropdown.openDrop( elementClicked );
+              Dropdown.openDrop( elementClicked, false );
+
+              targetElement = document.getElementById( elementClicked.target.getAttribute('target') )
+              listItems = getListItems( targetElement, 'li' );
+
+              var pressCaller
+                , link
+                ;
+
+              window.addEventListener(
+                  'keydown'
+                , function ( a ) {
+                    pressCaller = arguments.callee;
+                    keysPressed(
+                        { 
+                            "pressed"   : a.keyCode
+                          , "expect"    : [ keysCode.enter ]
+                        }
+                      , function () {
+                          console.log('parado en : ' + selected);
+                          link = getListItems( listItems [ selected ], 'a' ) [ 0 ].href;
+                          this.removeEventListener('keydown', pressCaller, false);
+
+                          return window.location = link;
+                      }
+                    );
+                  }
+                , false
+              ); 
+
+              window.addEventListener(
+                  'keydown'
+                , function ( a ) {
+                    var caller = arguments.callee
+                      , items = listItems.length
+                      ;
+
+                    if ( selected >= 0 )
+                      listItems [ selected ].applyStyle ( 'backgroundColor', 'transparent' );                       
+
+                    keysPressed(
+                        {
+                             "pressed" : a.keyCode
+                           , "expect"  : [ keysCode.up, keysCode.down ]
+                        }
+                      , function ( direction ) {
+
+                          if ( direction == 'up' ) {
+                            if ( activeItem == 1 ) 
+                              activeItem = items;
+                            else 
+                              activeItem--;
+                            selected = activeItem;
+                          }
+                          else {
+                            if ( activeToDown == items ) 
+                              activeToDown = selected = 1;
+                            else 
+                              selected = ++activeToDown;
+                          }
+
+                          listItems [ --selected ].applyStyle ( 'backgroundColor', '#09F' );
+                                                  
+                        }
+                      , false
+                    );
+                    
+                    keysPressed(
+                        { 
+                            "pressed"   : a.keyCode
+                          , "expect"    : [ keysCode.escape ]
+                        }
+                      , function () {
+                          Dropdown.openDrop( elementClicked, true );
+
+                          return window.removeEventListener( 'keydown', caller, false ); 
+                      }
+                    );
+                  }
+                , false 
+              );
+
             }
           , false
         );
-      }	
+      }  
     }
   };
 
