@@ -15,7 +15,7 @@
   body {
     font-family : Verdana;
     font-size : 11px;
-    color : rgb( 20, 20, 20, .6 );
+    color : rgba( 20, 20, 20, .6 );
   }
 
   ul, ol, li {
@@ -104,17 +104,14 @@
     display : block;
     padding : 8px;
   }
-	
+
 </style>
-<script type="text/javascript">
-  Dropdown.trigger();
-</script>
 </head>
 <body>
   <div class="dropdown-container">
     <ul>
       <li class="dropdown-buttons">
-        <a class="classic-button" role="dropDown" target="drop0">Dropdown 1</a>
+        <a class="classic-button" role="dropdown" target="drop0">Dropdown 1</a>
         <ul class="dropdown" id="drop0" open="false">
           <li>
             <a href="#">First link</a>
@@ -128,20 +125,23 @@
         </ul>
       </li>
       <li class="dropdown-buttons">
-        <a class="classic-button" role="dropDown" target="drop1">Dropdown 4</a>
+        <a class="classic-button" role="dropdown" target="drop1">Dropdown 4</a>
         <ul class="dropdown" id="drop1" open="false">
           <li>
-            <a href="#">First link</a>
+            <a href="#1">First link</a>
           </li>
           <li>
-            <a href="#">First link</a>
+            <a href="#2">First link</a>
           </li>
           <li>
-            <a href="#">First link</a>
+            <a href="#3">First link</a>
           </li>
         </ul>
       </li>
     </ul>
   </div>
+  <script type="text/javascript">
+  Dropdown.trigger();
+  </script>
 </body>
 </html>
